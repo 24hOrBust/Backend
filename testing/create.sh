@@ -1,0 +1,1 @@
+curl -X POST -H "Content-Type: application/json" -d @create.json http://localhost:5000/api/v1/messurement
