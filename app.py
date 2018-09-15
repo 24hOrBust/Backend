@@ -7,6 +7,15 @@ from pymongo import MongoClient
 from watson_developer_cloud import VisualRecognitionV3
 from io import BytesIO
 
+color_map = {
+    "01_Short_Grass"            : "#00FF00",
+    "02_Grass_Timber_Shrub"     : "#22DD00",
+    "04_Mature_Brush"           : "#44BB00",
+    "05_Young_Brush"            : "#669900",
+    "09_08_Tree_Litter"         : "#887700",
+    "10_Overmature_Timber"      : "#AA5500",
+    "11_Slash"                  : "#CC3300"
+}
 
 def build_mongo_client():
     raw_creds = os.environ.get('VCAP_SERVICES')
@@ -74,6 +83,29 @@ def upload_measurement():
     return jsonify({
         'message':'ok'
     })
+
+@app.route('/api/v1/map.geojson')
+def get_geo_json():
+    ret = {}
+    ret['type'] = 'FeatureCollection'
+    lst = []
+
+    for mes in client.fuel_scan.messurements.find():
+        tmp = {}
+        tmp['type'] = 'Feature'
+        if not mes['classification'] in color_map:
+            tmp['properties'] = { 'fuel-type-color' : '#0000FF' }
+        else:
+            tmp['properties'] = { 'fuel-type-color' : color_map[ mes['classification'] ] }
+        tmp['geometry'] = {
+            'type' : 'Point',
+            'coordinates' : [ mes['position']['long'], mes['position']['lat'] ]
+        }
+        lst.append(tmp)
+    
+    ret['features'] = lst
+
+    return jsonify(ret)
 
 port = os.getenv('VCAP_APP_PORT', '5000')
 if __name__ == "__main__":
