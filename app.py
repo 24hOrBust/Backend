@@ -39,7 +39,8 @@ spread_table = {
 }
 
 def calcualte_rof(classification):
-    return spread_table.get(classification,0.0)
+    #return spread_table.get(classification,0.0)
+    return random.randint(0, 100)
 
 def build_mongo_client():
     raw_creds = os.environ.get('VCAP_SERVICES')

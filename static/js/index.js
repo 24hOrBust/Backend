@@ -43,12 +43,9 @@ map.on('load', function() {
     //             "interpolate",
     //             ["linear"],
     //             ["heatmap-density"],
-    //             0, "rgba(33,102,172,0)",
-    //             0.2, "rgb(103,169,207)",
-    //             0.4, "rgb(209,229,240)",
-    //             0.6, "rgb(253,219,199)",
-    //             0.8, "rgb(239,138,98)",
-    //             1, "rgb(178,24,43)"
+    //             0, "rgba(0,0,0,0)",
+    //             0.01, "rgb(0,255,0)",
+    //             1, "rgb(255,0,0)"
     //         ],
     //         // Adjust the heatmap radius by zoom level
     //         "heatmap-radius": [
@@ -78,17 +75,36 @@ map.on('load', function() {
         "paint": {
             // Color circle by earthquake magnitude
             "circle-color": [
-                "get", "fuel-type-color"
+                "interpolate",
+                ["linear"],
+                ["get", "rate-of-spread"],
+                0, "rgb(0,255,0)",
+                100, "rgb(255,0,0)"
+            ],
+            "circle-radius": [
+                "interpolate",
+                ["linear"],
+                ["get", "rate-of-spread"],
+                0, 20,
+                100, 40
             ],
             "circle-stroke-color": "white",
-            "circle-stroke-width": 1,
-            // Transition from heatmap to circle layer by zoom level
+            "circle-stroke-width": 0,
             "circle-opacity": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                7, 0,
-                8, 1
+                0, 0.25,
+                17, 0.25,
+                18, 0.5,
+                20, 0.75
+            ],
+            "circle-blur": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                5, 10,
+                18, 0
             ]
         }
     });
@@ -98,7 +114,10 @@ map.on('load', function() {
         closeOnClick: false
     });
 
-    map.on('mouseenter', 'fuel-points', function(e) {
+    map.on('mousemove', 'fuel-points', function(e) {
+        //Cancel if we are too far from the circles
+        if(map.getZoom() < 15) return;
+
         // Change the cursor style as a UI indicator.
         map.getCanvas().style.cursor = 'pointer';
 
@@ -108,9 +127,9 @@ map.on('load', function() {
         // Ensure that if the map is zoomed out such that multiple
         // copies of the feature are visible, the popup appears
         // over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
+        // while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        //     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        // }
 
         // Populate the popup and set its coordinates
         // based on the feature found.
