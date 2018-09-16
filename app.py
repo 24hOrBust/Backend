@@ -2,7 +2,7 @@ import os
 import json
 import base64
 import uuid
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, render_template
 from pymongo import MongoClient
 from watson_developer_cloud import VisualRecognitionV3
 from io import BytesIO
@@ -49,7 +49,8 @@ def classify(image_base64):
     with open(filename,'rb') as f:
         class_data = visual_recognition.classify(
             images_file = f,
-            threshold='0.6',
+            threshold='0.0',
+            classifier_ids = ['FuelImageAnalyzer_511154762']
         )
 
         max_class = get_highest_class(class_data.result['images'][0]['classifiers'][0]['classes'])
@@ -57,6 +58,10 @@ def classify(image_base64):
         return max_class['class']
 
     return 'tree'
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/api/v1/measurement', methods=['POST'])
 def upload_measurement():
@@ -94,7 +99,7 @@ def get_geo_json():
             tmp['properties'] = { 'fuel-type-color' : color_map[ mes['classification'] ] }
         tmp['geometry'] = {
             'type' : 'Point',
-            'coordinates' : [ mes['position']['long'], mes['position']['lat'] ]
+            'coordinates' : [ mes['position']['lng'], mes['position']['lat'] ]
         }
         lst.append(tmp)
     
