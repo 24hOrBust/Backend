@@ -39,6 +39,16 @@ spread_table = {
     "11_Slash"                  : 13
 }
 
+fuel_density_map = {
+    "01_Short_Grass"            : 0.74,
+    "02_Grass_Timber_Shrub"     : 4,
+    "04_Mature_Brush"           : 13,
+    "05_Young_Brush"            : 3.5,
+    "09_08_Tree_Litter"         : 5,
+    "10_Overmature_Timber"      : 12,
+    "11_Slash"                  : 34.6
+}
+
 def calcualte_rof(classification, lt, lg, is_sample):
     if not is_sample == 1:
         return spread_table.get(classification, -1)
@@ -125,6 +135,7 @@ def get_geo_json():
         tmp['properties'] = { 'fuel-type-color' : color_map.get(mes['classification'], "#0000FF"),
                             'fuel-type-name' : name_map.get( mes['classification'], 'Unknown' ),
                             'rate-of-spread': calcualte_rof(mes['classification'], mes['position']['lat'], mes['position']['lng'], mes['sample']),
+                            'fuel_density': fuel_density_map.get(mes['classification'], 0.0),
                             'sample': mes['sample']
         }
         tmp['geometry'] = {
