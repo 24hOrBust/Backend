@@ -27,6 +27,9 @@ name_map = {
     "11_Slash"                  : "Slash"
 }
 
+def calcualte_rof(classification):
+    return 100
+
 def build_mongo_client():
     raw_creds = os.environ.get('VCAP_SERVICES')
     if not raw_creds:
@@ -103,12 +106,10 @@ def get_geo_json():
     for mes in client.fuel_scan.messurements.find():
         tmp = {}
         tmp['type'] = 'Feature'
-        if not mes['classification'] in color_map:
-            tmp['properties'] = { 'fuel-type-color' : '#0000FF' }
-        else:
-            tmp['properties'] = { 'fuel-type-color' : color_map[ mes['classification'] ],
-                                    'fuel-type-name' : name_map.get( mes['classification'], 'Unknown' )
-            }
+        tmp['properties'] = { 'fuel-type-color' : color_map.get(mes['classification'], "#0000FF"),
+                            'fuel-type-name' : name_map.get( mes['classification'], 'Unknown' ),
+                            'rate-of-spread': calcualte_rof(mes['classification'])
+        }
         tmp['geometry'] = {
             'type' : 'Point',
             'coordinates' : [ mes['position']['lng'], mes['position']['lat'] ]
