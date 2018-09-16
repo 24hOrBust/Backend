@@ -107,7 +107,7 @@ def get_geo_json():
             tmp['properties'] = { 'fuel-type-color' : '#0000FF' }
         else:
             tmp['properties'] = { 'fuel-type-color' : color_map[ mes['classification'] ],
-                                    'fuel-type-name' : name_map[ mes['classification'] ]
+                                    'fuel-type-name' : name_map.get( mes['classification'], 'Unknown' )
             }
         tmp['geometry'] = {
             'type' : 'Point',
