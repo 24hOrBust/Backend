@@ -7,6 +7,7 @@ from pymongo import MongoClient
 from watson_developer_cloud import VisualRecognitionV3
 from io import BytesIO
 import random
+import math
 
 color_map = {
     "01_Short_Grass"            : "#00FF00",
@@ -38,9 +39,10 @@ spread_table = {
     "11_Slash"                  : 13
 }
 
-def calcualte_rof(classification):
+def calcualte_rof(classification, lt, lg):
     #return spread_table.get(classification,0.0)
-    return random.randint(0, 100)
+    dist = math.sqrt( (lt - 39.383718)**2 + (lg + 123.668183)**2)
+    return dist * (1 / 0.000009) / 10
 
 def build_mongo_client():
     raw_creds = os.environ.get('VCAP_SERVICES')
@@ -120,7 +122,7 @@ def get_geo_json():
         tmp['type'] = 'Feature'
         tmp['properties'] = { 'fuel-type-color' : color_map.get(mes['classification'], "#0000FF"),
                             'fuel-type-name' : name_map.get( mes['classification'], 'Unknown' ),
-                            'rate-of-spread': calcualte_rof(mes['classification'])
+                            'rate-of-spread': calcualte_rof(mes['classification'], mes['position']['lat'], mes['position']['lng'])
         }
         tmp['geometry'] = {
             'type' : 'Point',
