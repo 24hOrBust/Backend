@@ -95,9 +95,8 @@ map.on('load', function() {
                 ["linear"],
                 ["zoom"],
                 0, 0.25,
-                17, 0.25,
-                18, 0.5,
-                20, 0.75
+                13, 0.25,
+                17, 0.75
             ],
             "circle-blur": [
                 "interpolate",
@@ -123,6 +122,9 @@ map.on('load', function() {
 
         var coordinates = e.features[0].geometry.coordinates.slice();
         var description = e.features[0].properties["fuel-type-name"];
+        description += "\n(Estimated spread rate: ";
+        description += (e.features[0].properties["rate-of-spread"]*0.02012).toFixed(2);
+        description += " kph)";
 
         // Ensure that if the map is zoomed out such that multiple
         // copies of the feature are visible, the popup appears

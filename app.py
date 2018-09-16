@@ -39,8 +39,9 @@ spread_table = {
     "11_Slash"                  : 13
 }
 
-def calcualte_rof(classification, lt, lg):
-    #return spread_table.get(classification,0.0)
+def calcualte_rof(classification, lt, lg, is_sample):
+    if not is_sample == 'True':
+        return spread_table.get(classification,0.0)
     dist = math.sqrt( (lt - 39.383718)**2 + (lg + 123.668183)**2)
     return dist * (1 / 0.000009) / 10
 
@@ -101,7 +102,8 @@ def upload_measurement():
             'lat':float(data['lat']),
             'lng':float(data['lng'])
         },
-        'classification':classification
+        'classification':classification,
+        'sample':'False'
     })
 
     return jsonify({
@@ -122,7 +124,7 @@ def get_geo_json():
         tmp['type'] = 'Feature'
         tmp['properties'] = { 'fuel-type-color' : color_map.get(mes['classification'], "#0000FF"),
                             'fuel-type-name' : name_map.get( mes['classification'], 'Unknown' ),
-                            'rate-of-spread': calcualte_rof(mes['classification'], mes['position']['lat'], mes['position']['lng'])
+                            'rate-of-spread': calcualte_rof(mes['classification'], mes['position']['lat'], mes['position']['lng'], mes['sample'])
         }
         tmp['geometry'] = {
             'type' : 'Point',
