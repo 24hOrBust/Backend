@@ -51,28 +51,23 @@ def classify(image_base64):
 
 @app.route('/api/v1/measurement', methods=['POST'])
 def upload_measurement():
-    data = request.get_json()
-    if not data:
-        abort(400)
-    elif 'position' not in data:
-        abort(400)
-    elif 'lat' not in data or 'lng' not in data:
-        abort(400)
-    elif 'image_data' not in data:
-        abort(400)
+    data = request.form
     
     classification = classify(data['image_data'])
 
     client.fuel_scan.messurements.insert_one({
         'position':{
-            'lat':data['lat'],
-            'lng':data['lng']
+            'lat':float(data['lat']),
+            'lng':float(data['lng'])
         },
         'classification':classification
     })
 
     return jsonify({
-        'message':'ok'
+        'message':'ok',
+        'result':{
+            'classification':classification
+        }
     })
 
 port = os.getenv('VCAP_APP_PORT', '5000')
