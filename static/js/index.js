@@ -4,7 +4,7 @@ var map = new mapboxgl.Map({
     container: 'map',
     zoom: 9,
     center: [-73.695134,42.732189],
-    style: 'mapbox://styles/mapbox/dark-v9'
+    style: 'mapbox://styles/mapbox/satellite-v9'
 })
 
 map.on('load', function() {
@@ -67,7 +67,7 @@ map.on('load', function() {
         "id": "earthquakes-point",
         "type": "circle",
         "source": "fuel-type-colors",
-        "minzoom": 7,
+        //"minzoom": 7,
         "paint": {
             // Color circle by earthquake magnitude
             "circle-color": [
@@ -84,5 +84,5 @@ map.on('load', function() {
                 8, 1
             ]
         }
-    }, 'waterway-label');
+    });
 })
