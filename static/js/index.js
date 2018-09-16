@@ -89,7 +89,13 @@ map.on('load', function() {
                 100, 40
             ],
             "circle-stroke-color": "white",
-            "circle-stroke-width": 0,
+            "circle-stroke-width": [
+                "interpolate",
+                ["linear"],
+                ["get", "sample"],
+                0, 1,
+                1, 0
+            ],
             "circle-opacity": [
                 "interpolate",
                 ["linear"],
@@ -104,6 +110,37 @@ map.on('load', function() {
                 ["zoom"],
                 5, 10,
                 18, 0
+            ]
+        }
+    });
+
+    map.addLayer({
+        "id": "individ_points",
+        "type": "circle",
+        "source": "fuel-type-colors",
+        "paint": {
+            "circle-color": [
+                "interpolate",
+                ["linear"],
+                ["get", "rate-of-spread"],
+                0, "rgb(0,255,0)",
+                100, "rgb(255,0,0)"
+            ],
+            "circle-radius": 10,
+            "circle-stroke-color": "white",
+            "circle-stroke-width": [
+                "interpolate",
+                ["linear"],
+                ["get", "sample"],
+                0, 1,
+                1, 0
+            ],
+            "circle-opacity": [
+                "interpolate",
+                ["linear"],
+                ["get", "sample"],
+                0, 1,
+                1, 0
             ]
         }
     });
