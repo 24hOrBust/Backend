@@ -17,6 +17,16 @@ color_map = {
     "11_Slash"                  : "#CC3300"
 }
 
+name_map = {
+    "01_Short_Grass"            : "Short Grass",
+    "02_Grass_Timber_Shrub"     : "Grass with Timber/Shrub Overstory",
+    "04_Mature_Brush"           : "Mature Brush",
+    "05_Young_Brush"            : "Young Brush",
+    "09_08_Tree_Litter"         : "Tree Litter",
+    "10_Overmature_Timber"      : "Overmature Timber",
+    "11_Slash"                  : "Slash"
+}
+
 def build_mongo_client():
     raw_creds = os.environ.get('VCAP_SERVICES')
     if not raw_creds:
@@ -96,7 +106,9 @@ def get_geo_json():
         if not mes['classification'] in color_map:
             tmp['properties'] = { 'fuel-type-color' : '#0000FF' }
         else:
-            tmp['properties'] = { 'fuel-type-color' : color_map[ mes['classification'] ] }
+            tmp['properties'] = { 'fuel-type-color' : color_map[ mes['classification'] ],
+                                    'fuel-type-name' : name_map[ mes['classification'] ]
+            }
         tmp['geometry'] = {
             'type' : 'Point',
             'coordinates' : [ mes['position']['lng'], mes['position']['lat'] ]
