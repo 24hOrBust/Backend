@@ -17,14 +17,14 @@ map.on('load', function() {
         "id": "earthquakes-heat",
         "type": "heatmap",
         "source": "fuel-type-colors",
-        "maxzoom": 12,
+        "maxzoom": 16.38,
         "paint": {
             // Increase the heatmap weight based on frequency and property magnitude
             "heatmap-weight": [
                 "interpolate",
                 ["linear"],
                 ["get", "rate-of-spread"],
-                0, 0,
+                0, 0.25,
                 100, 1
             ],
             // Increase the heatmap color weight weight by zoom level
@@ -54,9 +54,9 @@ map.on('load', function() {
             "heatmap-radius": [
                 "interpolate",
                 ["linear"],
-                ["zoom"],
-                0, 2,
-                9, 20
+                ["get","rate-of-spread"],
+                0, 10,
+                100, 20
             ],
             // Transition from heatmap to circle layer by zoom level
             "heatmap-opacity": [
@@ -64,16 +64,17 @@ map.on('load', function() {
                 ["linear"],
                 ["zoom"],
                 7, 1,
-                22, 0
+                20, 0.25
             ],
         }
     });
+
 
     map.addLayer({
         "id": "fuel-points",
         "type": "circle",
         "source": "fuel-type-colors",
-        "minzoom": 7,
+        "minzoom": 16.38,
         "paint": {
             // Color circle by earthquake magnitude
             "circle-color": [
@@ -123,3 +124,7 @@ map.on('load', function() {
         popup.remove();
     });
 })
+
+setInterval(function() {
+    console.log(map.getZoom())
+}, 100);

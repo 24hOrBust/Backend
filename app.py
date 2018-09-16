@@ -6,6 +6,7 @@ from flask import Flask, request, abort, jsonify, render_template
 from pymongo import MongoClient
 from watson_developer_cloud import VisualRecognitionV3
 from io import BytesIO
+import random
 
 color_map = {
     "01_Short_Grass"            : "#00FF00",
@@ -27,8 +28,18 @@ name_map = {
     "11_Slash"                  : "Slash"
 }
 
+spread_table = {
+    "01_Short_Grass"            : 78,
+    "02_Grass_Timber_Shrub"     : 35,
+    "04_Mature_Brush"           : 75,
+    "05_Young_Brush"            : 18,
+    "09_08_Tree_Litter"         : 1.6,
+    "10_Overmature_Timber"      : 7.9,
+    "11_Slash"                  : 13
+}
+
 def calcualte_rof(classification):
-    return 100
+    return spread_table.get(classification,0.0)
 
 def build_mongo_client():
     raw_creds = os.environ.get('VCAP_SERVICES')
